@@ -16,7 +16,7 @@ pipeline {
     ICP_NAMESPACE='dev'
     IMAGE_NAME='bluecompute-web'
     DOCKERFILE_PATH='./Dockerfile'
-
+    WEB_CHART_VERSION=6
     }
 
     stages{
@@ -34,7 +34,7 @@ pipeline {
      stage('Docker Build and Push') {
       steps {
         script {
-            docker.withRegistry("https://${ICP_REGISTRY_URL}", "${ICP_REGISTRY_CREDS}") {
+            docker.withRegistry("https://${ICP_REGISTRY_URL}:${ICP_REGISTRY_PORT}", "${ICP_REGISTRY_CREDS}") {
                 def myImage = docker.build("${ICP_NAMESPACE}/${IMAGE_NAME}:${env.BUILD_NUMBER}")
                 myImage.push()
             }
@@ -42,11 +42,11 @@ pipeline {
       }
      }
 
-     stage('Kubectl Update ') {
+     stage('MCM Deployable Update ') {
        agent {
          docker {
            reuseNode true
-           image '${ICP_REGISTRY_URL}/hollisc/kubectl:4'
+           image '${ICP_REGISTRY_URL}:${ICP_REGISTRY_PORT}/hollisc/kubectl:4'
          }
        }
        steps {
@@ -60,7 +60,7 @@ pipeline {
              set +e
              export KUBECONFIG=$KUBECONFIG
 
-             sed -i.bk s%VERSION%0.3.${BUILD_NUMBER}%g MCM-Deployable-Bluecompute-Web-Dev.yaml
+             sed -i.bk s%VERSION%0.3.${WEB_CHART_VERSION}%g MCM-Deployable-Bluecompute-Web-Dev.yaml
              kubectl apply -f MCM-Deployable-Bluecompute-Web-Dev.yaml -n dev
              """
            }
