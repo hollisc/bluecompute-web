@@ -67,18 +67,18 @@ pipeline {
        }
      }
 
-     stage('docker cleanup') {
-      steps {
-        sh """
-            # Cleanup image
-            docker images | grep ${ICP_NAMESPACE} | \
-            grep ${IMAGE_NAME} | \
-            awk '{print \$1 ":" \$2}' | \
-            grep ':${env.BUILD_NUMBER}\$' | \
-            xargs -n1 docker rmi
-        """
-      }
-     }
+//     stage('docker cleanup') {
+//      steps {
+//        sh """
+//            # Cleanup image
+//            docker images | grep ${ICP_NAMESPACE} | \
+//            grep ${IMAGE_NAME} | \
+//            awk '{print \$1 ":" \$2}' | \
+//            grep ':${env.BUILD_NUMBER}\$' | \
+//            xargs -n1 docker rmi
+//        """
+//      }
+//     }
 
     }
     post {
