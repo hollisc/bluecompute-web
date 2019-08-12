@@ -86,6 +86,13 @@ pipeline {
       //    [$class: 'TextParameterDefinition', defaultValue: 'staging', description: 'Environment', name: 'env']
       //   ])
       //   echo ("Env: "+userInput)
+
+            def userInput = input(id: 'userInput', message: 'Merge to?',
+             parameters: [[$class: 'ChoiceParameterDefinition', defaultValue: 'strDef',
+                description:'describing choices', name:'nameChoice', choices: "Staging"]
+             ])
+            println(userInput);
+
          }
        }
      }
