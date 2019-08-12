@@ -60,8 +60,8 @@ pipeline {
              set +e
              export KUBECONFIG=$KUBECONFIG
 
-             sed -i.bk s%VERSION%0.3.${WEB_CHART_VERSION}%g MCM-Deployable-Bluecompute-Web-Dev.yaml
-             kubectl apply -f MCM-Deployable-Bluecompute-Web-Dev.yaml -n dev
+             sed -i.bk s%VERSION%0.3.${WEB_CHART_VERSION}%g ./MCM/MCM-Deployable-Bluecompute-Web-Dev.yaml
+             kubectl apply -f ./MCM/MCM-Deployable-Bluecompute-Web-Dev.yaml -n dev
              """
            }
          }
