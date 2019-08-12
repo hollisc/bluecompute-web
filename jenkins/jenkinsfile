@@ -80,7 +80,12 @@ pipeline {
              sleep 5
              echo "Placeholder for tests."
              """
-           }
+
+      //   def userInput = input(
+      //    id: 'userInput', message: 'Promote to Staging?', parameters: [
+      //    [$class: 'TextParameterDefinition', defaultValue: 'staging', description: 'Environment', name: 'env']
+      //   ])
+      //   echo ("Env: "+userInput)
          }
        }
      }
@@ -110,9 +115,8 @@ pipeline {
          }
        }
      }
+   }
 
-
-    }
     post {
         always {
           script {
