@@ -45,7 +45,7 @@ pipeline {
        agent {
          docker {
            reuseNode true
-           image '${ICP_REGISTRY_URL}:${ICP_REGISTRY_PORT}/hollisc/kubectl:4'
+           image '${ICP_REGISTRY_URL}/hollisc/kubectl:4'
          }
        }
        steps {
