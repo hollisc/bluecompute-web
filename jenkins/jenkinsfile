@@ -16,7 +16,6 @@ pipeline {
     ICP_NAMESPACE='dev'
     IMAGE_NAME='bluecompute-web'
     DOCKERFILE_PATH='./Dockerfile'
-    WEB_CHART_VERSION=6
     }
 
     stages{
