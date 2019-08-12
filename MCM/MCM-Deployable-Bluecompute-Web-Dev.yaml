@@ -12,6 +12,6 @@ spec:
       kind: helm
       helm:
         chartURL: >-
-          https://raw.githubusercontent.com/hollisc/bluecompute-web/master/charts/web-dev-0.3.2.tgz
+          https://raw.githubusercontent.com/hollisc/bluecompute-web/master/charts/web-dev-VERSION.tgz
         namespace: dev
-        version: 0.3.2
+        version: VERSION

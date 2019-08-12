@@ -1,0 +1,91 @@
+pipeline {
+    agent {label "slave1 || slave2"}
+    options {
+    disableConcurrentBuilds()
+    timestamps()
+    }
+
+    environment {
+    GIT_ORG='hollisc'
+    GIT_REPO='bluecompute-web'
+    GIT_BRANCH='master'
+    GIT_CREDS='github-hollisc'
+    ICP_REGISTRY_URL='https://devops.gse.icp1.csplab.local:8500'
+    ICP_REGISTRY_CREDS='icpRegistryCred'
+    ICP_NAMESPACE='dev'
+    IMAGE_NAME='bluecompute-web'
+    DOCKERFILE_PATH='./Dockerfile'
+
+    }
+
+    stages{
+
+     stage('SCM Checkout') {
+      steps {
+        script {
+          git branch: "${GIT_BRANCH}",
+          url: "https://github.com/${GIT_ORG}/${GIT_REPO}.git",
+          credentialsId: "${GIT_CREDS}"
+        }
+      }
+     }
+
+     stage('Docker Build and Push') {
+      steps {
+        script {
+            docker.withRegistry("${ICP_REGISTRY_URL}", "${ICP_REGISTRY_CREDS}") {
+                def myImage = docker.build("${ICP_NAMESPACE}/${IMAGE_NAME}:${env.BUILD_NUMBER}")
+                myImage.push()
+            }
+        }
+      }
+     }
+
+     stage('Kubectl Update ') {
+       agent {
+         docker {
+           reuseNode true
+           image '${ICP_REGISTRY_URL}:${ICP_REGISTRY_PORT}/hollisc/kubectl:4'
+         }
+       }
+       steps {
+         script {
+           withCredentials([
+             file(credentialsId: 'icp1-admin-kubeconfig-yaml',
+             variable: 'KUBECONFIG')]) {
+
+             sh """
+             #!/bin/bash
+             set +e
+             export KUBECONFIG=$KUBECONFIG
+
+             sed -i.bk s%VERSION%0.3.${BUILD_NUMBER}%g MCM-Deployable-Bluecompute-Web-Dev.yaml
+             kubectl apply -f MCM-Deployable-Bluecompute-Web-Dev.yaml -n dev
+             """
+           }
+         }
+       }
+     }
+
+     stage('docker cleanup') {
+      steps {
+        sh """
+            # Cleanup image
+            docker images | grep ${ICP_NAMESPACE} | \
+            grep ${IMAGE_NAME} | \
+            awk '{print \$1 ":" \$2}' | \
+            grep ':${env.BUILD_NUMBER}\$' | \
+            xargs -n1 docker rmi
+        """
+      }
+     }
+
+    }
+    post {
+        always {
+          script {
+            cleanWs()
+          }
+        }
+    }
+}
