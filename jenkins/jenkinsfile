@@ -67,7 +67,7 @@ pipeline {
        }
      }
 
-     stage('Tests') {
+     stage('Execute tests') {
        agent {
          docker {
            reuseNode true
@@ -108,8 +108,8 @@ pipeline {
              set +e
              export KUBECONFIG=$KUBECONFIG
 
-             sed -i.bk s%VERSION%0.3.${WEB_CHART_VERSION}%g ./MCM/MCM-Deployable-Bluecompute-Web-Staging.yaml
-             kubectl apply -f ./MCM/MCM-Deployable-Bluecompute-Web-Staging.yaml -n dev
+             sed -i.bk s%VERSION%0.3.${WEB_CHART_VERSION}%g ./MCM/MCM-Deployable-Bluecompute-Web-STAGING.yaml
+             kubectl apply -f ./MCM/MCM-Deployable-Bluecompute-Web-STAGING.yaml -n dev
              """
            }
          }
