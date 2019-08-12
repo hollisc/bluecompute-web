@@ -3,8 +3,8 @@
 # Declare variables to be passed into your templates.
 replicaCount: 1
 image:
-  repository: devops.gse.icp3.csplab.local:8500/dev/bluecompute-web
-  tag: 18
+  repository: devops.gse.icp1.csplab.local:8500/dev/bluecompute-web
+  tag: 19
   pullPolicy: IfNotPresent
   pullSecret:
 service:
