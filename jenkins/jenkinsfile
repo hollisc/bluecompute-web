@@ -10,7 +10,8 @@ pipeline {
     GIT_REPO='bluecompute-web'
     GIT_BRANCH='master'
     GIT_CREDS='github-hollisc'
-    ICP_REGISTRY_URL='https://devops.gse.icp1.csplab.local:8500'
+    ICP_REGISTRY_URL='devops.gse.icp1.csplab.local'
+    ICP_REGISTRY_PORT='8500'
     ICP_REGISTRY_CREDS='icpRegistryCred'
     ICP_NAMESPACE='dev'
     IMAGE_NAME='bluecompute-web'
@@ -33,7 +34,7 @@ pipeline {
      stage('Docker Build and Push') {
       steps {
         script {
-            docker.withRegistry("${ICP_REGISTRY_URL}", "${ICP_REGISTRY_CREDS}") {
+            docker.withRegistry("https://${ICP_REGISTRY_URL}", "${ICP_REGISTRY_CREDS}") {
                 def myImage = docker.build("${ICP_NAMESPACE}/${IMAGE_NAME}:${env.BUILD_NUMBER}")
                 myImage.push()
             }
