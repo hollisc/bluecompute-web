@@ -1,0 +1,50 @@
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementPolicy
+metadata:
+  name: bluecompute-web-staging
+  labels:
+    name: bluecompute-web-staging
+    app: bluecompute
+  namespace: dev
+spec:
+  clusterLabels:
+    matchLabels:
+      environment: Staging
+  clusterReplicas: 1
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementBinding
+metadata:
+    labels:
+      app: bluecompute
+      name: bluecompute
+      placementPolicy: bluecompute
+    name: bluecompute-web-placementbinding-staging
+placementRef:
+  apiGroup: mcm.ibm.com
+  kind: PlacementPolicy
+  name: bluecompute-web-staging
+subjects:
+- apiGroup: mcm.ibm.com
+  kind: Deployable
+  name: bluecompute-web-staging
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: ApplicationRelationship
+metadata:
+  name: bluecompute-app-web-staging
+  labels:
+    app: bluecompute
+    destinationKind: Deployable
+    destinationName: bluecompute-web-staging
+    sourceKind: Application
+    sourceName: bluecompute
+  namespace: dev
+spec:
+  destination:
+    name: bluecompute-web-staging
+    kind: Deployable
+  source:
+    name: bluecompute
+    kind: Application
+  type: contains

@@ -1,0 +1,50 @@
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementPolicy
+metadata:
+  name: bluecompute-web-dev
+  labels:
+    name: bluecompute-web-dev
+    app: bluecompute
+  namespace: dev
+spec:
+  clusterLabels:
+    matchLabels:
+      environment: Dev
+  clusterReplicas: 1
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: PlacementBinding
+metadata:
+    labels:
+      app: bluecompute
+      name: bluecompute
+      placementPolicy: bluecompute
+    name: bluecompute-web-placementbinding
+placementRef:
+  apiGroup: mcm.ibm.com
+  kind: PlacementPolicy
+  name: bluecompute-web
+subjects:
+- apiGroup: mcm.ibm.com
+  kind: Deployable
+  name: bluecompute-web-dev
+---
+apiVersion: mcm.ibm.com/v1alpha1
+kind: ApplicationRelationship
+metadata:
+  name: bluecompute-app-web
+  labels:
+    app: bluecompute
+    destinationKind: Deployable
+    destinationName: bluecompute-web-dev
+    sourceKind: Application
+    sourceName: bluecompute
+  namespace: dev
+spec:
+  destination:
+    name: bluecompute-web-dev
+    kind: Deployable
+  source:
+    name: bluecompute
+    kind: Application
+  type: contains
