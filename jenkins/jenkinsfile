@@ -20,7 +20,7 @@ pipeline {
 
     stages{
 
-     stage('SCM Checkout') {
+     stage('SCM checkout') {
       steps {
         script {
           git branch: "${GIT_BRANCH}",
@@ -30,7 +30,7 @@ pipeline {
       }
      }
 
-     stage('Docker Build and Push') {
+     stage('Docker build and push to private registry') {
       steps {
         script {
             docker.withRegistry("https://${ICP_REGISTRY_URL}:${ICP_REGISTRY_PORT}", "${ICP_REGISTRY_CREDS}") {
@@ -41,7 +41,7 @@ pipeline {
       }
      }
 
-     stage('MCM Deployable Update ') {
+     stage('Update MCM Deployable for DEV clusters') {
        agent {
          docker {
            reuseNode true
@@ -67,18 +67,50 @@ pipeline {
        }
      }
 
-//     stage('docker cleanup') {
-//      steps {
-//        sh """
-//            # Cleanup image
-//            docker images | grep ${ICP_NAMESPACE} | \
-//            grep ${IMAGE_NAME} | \
-//            awk '{print \$1 ":" \$2}' | \
-//            grep ':${env.BUILD_NUMBER}\$' | \
-//            xargs -n1 docker rmi
-//        """
-//      }
-//     }
+     stage('Tests') {
+       agent {
+         docker {
+           reuseNode true
+           image '${ICP_REGISTRY_URL}:${ICP_REGISTRY_PORT}/hollisc/kubectl:4'
+         }
+       }
+       steps {
+         script {
+             sh """
+             sleep 5
+             echo "Placeholder for tests."
+             """
+           }
+         }
+       }
+     }
+
+     stage('Update MCM Deployable for STAGING clusters') {
+       agent {
+         docker {
+           reuseNode true
+           image '${ICP_REGISTRY_URL}:${ICP_REGISTRY_PORT}/hollisc/kubectl:4'
+         }
+       }
+       steps {
+         script {
+           withCredentials([
+             file(credentialsId: 'icp1-admin-kubeconfig-yaml',
+             variable: 'KUBECONFIG')]) {
+
+             sh """
+             #!/bin/bash
+             set +e
+             export KUBECONFIG=$KUBECONFIG
+
+             sed -i.bk s%VERSION%0.3.${WEB_CHART_VERSION}%g ./MCM/MCM-Deployable-Bluecompute-Web-Staging.yaml
+             kubectl apply -f ./MCM/MCM-Deployable-Bluecompute-Web-Staging.yaml -n dev
+             """
+           }
+         }
+       }
+     }
+
 
     }
     post {
