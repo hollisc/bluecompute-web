@@ -19,11 +19,11 @@ metadata:
       app: bluecompute
       name: bluecompute
       placementPolicy: bluecompute
-    name: bluecompute-web-placementbinding
+    name: bluecompute-web-dev
 placementRef:
   apiGroup: mcm.ibm.com
   kind: PlacementPolicy
-  name: bluecompute-web
+  name: bluecompute-web-dev
 subjects:
 - apiGroup: mcm.ibm.com
   kind: Deployable
@@ -32,7 +32,7 @@ subjects:
 apiVersion: mcm.ibm.com/v1alpha1
 kind: ApplicationRelationship
 metadata:
-  name: bluecompute-app-web
+  name: bluecompute-web-dev
   labels:
     app: bluecompute
     destinationKind: Deployable

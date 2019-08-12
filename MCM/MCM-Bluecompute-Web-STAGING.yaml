@@ -19,7 +19,7 @@ metadata:
       app: bluecompute
       name: bluecompute
       placementPolicy: bluecompute
-    name: bluecompute-web-placementbinding-staging
+    name: bluecompute-web-staging
 placementRef:
   apiGroup: mcm.ibm.com
   kind: PlacementPolicy
