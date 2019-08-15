@@ -4,7 +4,7 @@
 replicaCount: 1
 image:
   repository: devops.gse.icp1.csplab.local:8500/dev/bluecompute-web
-  tag: 21
+  tag: 22
   pullPolicy: IfNotPresent
   pullSecret:
 service:
